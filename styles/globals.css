@@ -1,0 +1,23 @@
+/* styles/global.css */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+/* @import './base.css'; */
+@import "tailwindcss/utilities";
+
+.main {
+  background-color: #1e0342;
+  height: 100vh; /* Ensure the background covers the entire viewport */
+  font-family: "Nunito", sans-serif;
+  font-weight: 750;
+  position: relative;
+}
+
+.app {
+  color: #e1f7f5;
+}
+
+.container {
+  @apply relative z-10 flex justify-center items-center flex-col max-w-7xl mx-auto sm:px-16 px-6;
+}
