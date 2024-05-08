@@ -4,4 +4,7 @@ export const emojis = {
   Angry: "😡",
   Surprised: "😯",
   Random: "🐕",
+  Reflective: "🤔",
+  Thoughtful: "🤓",
+  Melancholy: "😶",
 };
