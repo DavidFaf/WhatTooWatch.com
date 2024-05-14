@@ -2,10 +2,12 @@ import EmojiButton from "@components/EmojiButton";
 import RoundCard from "@components/RoundCard";
 import React from "react";
 import { Emojis } from "@models/types";
+import Image from "next/image";
+import { emojis} from "@models/emojis";
 
 function page() {
   return (
-    <div className="mx-auto md:pt-20">
+    <div className="mx-auto">
       <section className="pt-4">
         <RoundCard>hey</RoundCard>
         <p className="text-3xl md:text-5xl font-bold tracking-tight nunito text-center mt-4 mb-4">
@@ -22,31 +24,21 @@ function page() {
           <div className="pb-8">
             <div className="container pt-4 pb-4">
               <p className="text-almost-black md:text-3xl text-xl font-semibold">
-                How are you feeling today ?
+                What genre would you like ?
               </p>
             </div>
             <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 px-4">
-              <EmojiButton emotion="Random"/>
-              <EmojiButton emotion="Reflective" />
-              <EmojiButton emotion="Thoughtful" />
-              <EmojiButton emotion="Melancholy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Random" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
-              <EmojiButton emotion="Happy" />
+              {Object.entries(emojis).map(([genre, {id}])=>(
+                <EmojiButton key={id} emotion={genre} />
+              ))}
             </div>
           </div>
         </RoundCard>
       </section>
       <section className="about-me container">
-        <p>Designed by <u>Batman</u></p>
+        <p>
+          Designed by <u>Batman</u>
+        </p>
         <p>What i’m listening to right now : </p>
         <RoundCard>
           <h3>Insert spotify playlist here</h3>

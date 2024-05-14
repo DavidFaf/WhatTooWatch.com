@@ -8,7 +8,7 @@
 
 .main {
   background-color: #1e0342;
-  min-height: 100vh; /* Ensure the background covers the entire viewport */
+  min-height: 100vh;
   font-family: "Nunito", sans-serif;
   font-weight: 750;
   position: relative;
@@ -20,4 +20,20 @@
 
 .container {
   @apply relative z-10 flex justify-center items-center flex-col max-w-7xl mx-auto sm:px-16 px-6;
+}
+
+.card{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--rounded-box, 1rem);
+}
+
+.card-body{
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding: var(--padding-card, 2rem);
+    gap: .5rem;
 }
