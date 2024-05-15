@@ -45,4 +45,37 @@ const test = () => {
   )
 }
 
+      // const movieDataWithTrailersAndDurations = await data.results.map(
+      //   async (movie) => {
+      //     const trailerResponse = await fetchData(
+      //       `https://api.themoviedb.org/3/movie/${movie.id}/videos`
+      //     );
+      //     const durationResponse = await fetchData(
+      //       `https://api.themoviedb.org/3/movie/${movie.id}`
+      //     );
+      //     // const durationData = await durationResponse.json();
+      //     console.log(trailerResponse);
+      //     console.log(movie.id);
+      //     console.log(durationResponse);
+      //     return trailerResponse;
+      //   }
+      // );
+
+      // setMovieDetails(movieDataWithTrailersAndDurations);
+      // console.log(movieDetails)
+
+        // const toggleOverview = () => {
+
+  //   setShowFullOverview(!showFullOverview);
+  // };
+
+  // const truncateOverview = (text: string) => {
+  //   if (text.length > 100 && !showFullOverview) {
+  //     return text.slice(0, 100) + '...';
+  //   }
+  //   return text;
+  // };
+
+  // const overview = truncateOverview(movie.overview);
+
 export default test

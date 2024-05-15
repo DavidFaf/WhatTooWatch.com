@@ -37,7 +37,8 @@ const index = () => {
   const [movieData, setMovieData] = useState<movieData>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullOverview, setShowFullOverview] = useState(false);
-  // const [movieDetails, setMovieDetails] = useState();
+  const [trailerKeys, setTrailerKeys] = useState([]);
+  const [y, setY] = useState([]);
 
   if (!(genre in emojis)) {
     router.push("/404");
@@ -50,23 +51,29 @@ const index = () => {
     try {
       const { data, error } = await fetchData(url);
 
-      // const movieDataWithTrailersAndDurations = await data.results.map(
-      //   async (movie) => {
-      //     const trailerResponse = await fetchData(
-      //       `https://api.themoviedb.org/3/movie/${movie.id}/videos`
-      //     );
-      //     const durationResponse = await fetchData(
-      //       `https://api.themoviedb.org/3/movie/${movie.id}`
-      //     );
-      //     // const durationData = await durationResponse.json();
-      //     console.log(trailerResponse);
-      //     console.log(movie.id);
-      //     console.log(durationResponse);
-      //     return trailerResponse;
-      //   }
-      // );
+      // console.log(data.results[0], "first response");
 
-      // setMovieDetails(movieDataWithTrailersAndDurations);
+      // const trailerKeys = [];
+
+      const x = data.results.map(async (movie) => {
+        const { data: trailerResponse, error } = await fetchData(
+          `https://api.themoviedb.org/3/movie/${movie.id}/videos`
+        );
+
+        // trailerKeys.push(trailerResponse.results[0].key);
+        for (let key in trailerResponse.results[0].key) {
+          // Assuming you want to append { key: z[key] } to x
+          const newObj = trailerResponse.results[0].key ;
+
+          // Update x by combining the existing state with the new object
+          setY((prevState) => [...prevState, newObj]);
+
+          // console.log(trailerResponse.results[0].key);
+          return trailerResponse.results[0].key;
+        }
+      });
+
+      setTrailerKeys(x);
 
       if (error) {
         alert(error);
@@ -105,6 +112,8 @@ const index = () => {
   };
 
   const movie: movieObject = movieData.results[currentIndex];
+  
+
 
   const toggleOverview = () => {
     setShowFullOverview(!showFullOverview);
@@ -113,20 +122,6 @@ const index = () => {
   const overview = showFullOverview
     ? movieData.results[currentIndex].overview
     : movieData.results[currentIndex].overview.slice(0, 250) + "...";
-
-  // const toggleOverview = () => {
-
-  //   setShowFullOverview(!showFullOverview);
-  // };
-
-  // const truncateOverview = (text: string) => {
-  //   if (text.length > 100 && !showFullOverview) {
-  //     return text.slice(0, 100) + '...';
-  //   }
-  //   return text;
-  // };
-
-  // const overview = truncateOverview(movie.overview);
 
   const mapGenreIdsToGenres = (genreIds: number[]): string[] => {
     const genres: string[] = [];
@@ -141,8 +136,10 @@ const index = () => {
     return genres;
   };
 
+  const keyUrl = y
+  console.log(keyUrl[currentIndex], "KEY URL");
+
   // Example usage
-  const genreIds = [878, 12, 28];
   const genres = mapGenreIdsToGenres(movie.genre_ids);
   // console.log(genres); // Output: ["Science Fiction", "Adventure", "Action"]
 
@@ -156,7 +153,8 @@ const index = () => {
           <figure>
             <div className="video-responsive w-full">
               <iframe
-                src="https://www.youtube.com/embed/ue80QwXMRHg?si=BWezaVtOBwxIGK_9"
+                // src={`https://www.youtube.com/embed/ue80QwXMRHg?si=BWezaVtOBwxIGK_9`}
+                src={`https://www.youtube.com/embed/${keyUrl[currentIndex]}`}
                 frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen=""
