@@ -1,4 +1,5 @@
 "use client";
+import NavBar from "@components/NavBar";
 import RoundCard from "@components/RoundCard";
 import { emojis } from "@models/emojis";
 import fetchData from "@services/network";
@@ -38,47 +39,83 @@ const index = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullOverview, setShowFullOverview] = useState(false);
   const [trailerKeys, setTrailerKeys] = useState([]);
-  const [y, setY] = useState([]);
+  const [runtimes, setRuntimes] = useState([]);
+  const [pageNum, setPageNum] = useState<number>(1);
 
   if (!(genre in emojis)) {
     router.push("/404");
     return;
   }
 
-  const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=${genre_id}`;
-
   const fetchMoviesByGenre = async () => {
+    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${pageNum}&sort_by=popularity.desc&with_genres=${genre_id}`;
+
     try {
       const { data, error } = await fetchData(url);
 
-      // console.log(data.results[0], "first response");
+      // const x = data.results.map(async (movie) => {
+      //   const { data: trailerResponse, error } = await fetchData(
+      //     `https://api.themoviedb.org/3/movie/${movie.id}/videos`
+      //   );
+      //   console.log(movie);
+      //   for (let key in trailerResponse.results[0].key) {
+      //     // Assuming you want to append { key: z[key] } to x
+      //     const newObj = trailerResponse.results[0].key;
 
-      // const trailerKeys = [];
+      //     // Update x by combining the existing state with the new object
+      //     setY((prevState) => [...prevState, newObj]);
 
-      const x = data.results.map(async (movie) => {
-        const { data: trailerResponse, error } = await fetchData(
+      //     // console.log(trailerResponse.results[0].key);
+      //     return trailerResponse.results[0].key;
+      //   }
+      // });
+
+      const trailerPromises = data.results.map(async (movie) => {
+        const { data: trailerResponse, error: trailerError } = await fetchData(
           `https://api.themoviedb.org/3/movie/${movie.id}/videos`
         );
 
-        // trailerKeys.push(trailerResponse.results[0].key);
-        for (let key in trailerResponse.results[0].key) {
-          // Assuming you want to append { key: z[key] } to x
-          const newObj = trailerResponse.results[0].key ;
-
-          // Update x by combining the existing state with the new object
-          setY((prevState) => [...prevState, newObj]);
-
-          // console.log(trailerResponse.results[0].key);
-          return trailerResponse.results[0].key;
+        if (trailerError) {
+          console.error(trailerError);
+          return null;
         }
+
+        const trailerKey = trailerResponse.results?.[0]?.key || null;
+
+        const { data: movieDetailsResponse, error: movieDetailsError } = await fetchData(
+          `https://api.themoviedb.org/3/movie/${movie.id}`
+        );
+  
+        if (movieDetailsError) {
+          console.error(movieDetailsError);
+          return null;
+        }
+        const runtime = movieDetailsResponse.runtime || null;
+
+
+        return { trailerKey, runtime };
       });
 
-      setTrailerKeys(x);
+
+      const moviesWithTrailers = await Promise.all(trailerPromises);
+
+      const trailerKeys = moviesWithTrailers
+        .map((movie) => movie.trailerKey)
+        .filter((key) => key !== null);
+
+      const runtimes = moviesWithTrailers
+      .map((movie) => movie.runtime)
+      .filter((runtime) => runtime !== null);
+
+      setTrailerKeys(trailerKeys);
+      setRuntimes(runtimes);
+
 
       if (error) {
         alert(error);
       }
       setMovieData(data);
+      // console.log(trailerKeys);
     } catch (err) {
       alert(err);
     }
@@ -86,7 +123,7 @@ const index = () => {
 
   useEffect(() => {
     fetchMoviesByGenre();
-  }, [genre_id]);
+  }, [genre_id, pageNum]);
 
   if (!movieData) {
     return null;
@@ -98,7 +135,7 @@ const index = () => {
       console.log(currentIndex);
       setShowFullOverview(false);
     } else {
-      alert("No more movies to show.");
+      setPageNum((prevPageNum) => prevPageNum + 1);
     }
   };
 
@@ -112,8 +149,6 @@ const index = () => {
   };
 
   const movie: movieObject = movieData.results[currentIndex];
-  
-
 
   const toggleOverview = () => {
     setShowFullOverview(!showFullOverview);
@@ -136,8 +171,11 @@ const index = () => {
     return genres;
   };
 
-  const keyUrl = y
-  console.log(keyUrl[currentIndex], "KEY URL");
+  const formatRuntime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}min`;
+  };
 
   // Example usage
   const genres = mapGenreIdsToGenres(movie.genre_ids);
@@ -146,7 +184,7 @@ const index = () => {
   return (
     <div className="max-w-[700px]">
       <section className="title-section pt-4">
-        <RoundCard>Insert title here</RoundCard>
+        <NavBar />
       </section>
       <section className="py-9">
         <RoundCard>
@@ -154,12 +192,12 @@ const index = () => {
             <div className="video-responsive w-full">
               <iframe
                 // src={`https://www.youtube.com/embed/ue80QwXMRHg?si=BWezaVtOBwxIGK_9`}
-                src={`https://www.youtube.com/embed/${keyUrl[currentIndex]}`}
-                frameborder="0"
+                src={`https://www.youtube.com/embed/${trailerKeys[currentIndex]}`}
+                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen=""
+                // allowFullScreen=""
                 title="Embedded youtube"
-                class="w-full h-64 md:h-96"
+                className="w-full h-64 md:h-96"
               ></iframe>
             </div>
           </figure>
@@ -168,7 +206,7 @@ const index = () => {
       <section className="movie-details pb-4">
         <p className="text-3xl font-semibold">{movie.title}</p>
         <div className="text-lg font-medium pb-2">
-          {movie.release_date.substring(0, 4)} | 1h 58min | ⭐{" "}
+          {movie.release_date.substring(0, 4)} | {formatRuntime(runtimes[currentIndex])} | ⭐{" "}
           <span className="font-semibold">
             {parseFloat(movie.vote_average.toFixed(2))}
           </span>
@@ -176,7 +214,10 @@ const index = () => {
         </div>
         <div className="flex flex-row justify-start items-center gap-2 wrap flex-nowrap overflow-auto pb-2 noScroolBar">
           {genres.map((genre) => (
-            <div className="badge text-almost-black opacity-80 bg-sky-blue badge-lg">
+            <div
+              key={genre}
+              className="badge text-almost-black opacity-80 bg-sky-blue badge-lg"
+            >
               {genre}
             </div>
           ))}

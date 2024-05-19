@@ -2,14 +2,17 @@ import EmojiButton from "@components/EmojiButton";
 import RoundCard from "@components/RoundCard";
 import React from "react";
 import { Emojis } from "@models/types";
-import Image from "next/image";
-import { emojis} from "@models/emojis";
+
+import { emojis } from "@models/emojis";
+import Link from "next/link";
+import NavBar from "@components/NavBar";
+import AboutMe from "@components/AboutMe";
 
 function page() {
   return (
     <div className="mx-auto">
       <section className="pt-4">
-        <RoundCard>hey</RoundCard>
+        <NavBar />
         <p className="text-3xl md:text-5xl font-bold tracking-tight nunito text-center mt-4 mb-4">
           DISCOVER TOP RATED MOVIES
           <br className="max-md:hidden" />
@@ -28,24 +31,14 @@ function page() {
               </p>
             </div>
             <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 px-4">
-              {Object.entries(emojis).map(([genre, {id}])=>(
+              {Object.entries(emojis).map(([genre, { id }]) => (
                 <EmojiButton key={id} emotion={genre} />
               ))}
             </div>
           </div>
         </RoundCard>
       </section>
-      <section className="about-me container">
-        <p>
-          Designed by <u>Batman</u>
-        </p>
-        <p>What i’m listening to right now : </p>
-        <RoundCard>
-          <h3>Insert spotify playlist here</h3>
-          <h3>Insert spotify playlist here</h3>
-          <h3>Insert spotify playlist here</h3>
-        </RoundCard>
-      </section>
+      <AboutMe />
     </div>
   );
 }

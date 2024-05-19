@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { PropsWithChildren } from "react";
 
 export const metadata: Metadata = {
-  title: "what2watch",
+  title: "WhatTooWatch: Discover the best movies on the internet",
   description: "Find movies to watch based on your mood",
 };
 
