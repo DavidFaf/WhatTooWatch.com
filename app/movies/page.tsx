@@ -36,7 +36,7 @@ const index = () => {
   const genre_id = searchParams.get("genre_id") || "";
   const [movieData, setMovieData] = useState<movieData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showFullOverview, setShowFullOverview] = useState(false);
+  const [showFullOverview, setShowFullOverview] = useState<boolean>(false);
   const [trailerKeys, setTrailerKeys] = useState([]);
   const [runtimes, setRuntimes] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -69,7 +69,7 @@ const index = () => {
       //   }
       // });
 
-      const trailerPromises = data.results.map(async (movie) => {
+      const trailerPromises = data.results.map(async (movie:any) => {
         const { data: trailerResponse, error: trailerError } = await fetchData(
           `https://api.themoviedb.org/3/movie/${movie.id}/videos`
         );
@@ -95,11 +95,11 @@ const index = () => {
 
       const moviesWithTrailers = await Promise.all(trailerPromises);
 
-      const trailerKeys = moviesWithTrailers
+      const trailerKeys:any = moviesWithTrailers
         .map((movie) => movie.trailerKey)
         .filter((key) => key !== null);
 
-      const runtimes = moviesWithTrailers
+      const runtimes:any = moviesWithTrailers
         .map((movie) => movie.runtime)
         .filter((runtime) => runtime !== null);
 
@@ -155,9 +155,9 @@ const index = () => {
     setShowFullOverview(!showFullOverview);
   };
 
-  const overview = showFullOverview
-    ? movieData.results[currentIndex].overview
-    : movieData.results[currentIndex].overview.slice(0, 250) + "...";
+  const overview:string = showFullOverview
+    ? movieData?.results[currentIndex]?.overview || ''
+    : (movieData.results[currentIndex].overview || '').slice(0, 250) + "...";
 
   const mapGenreIdsToGenres = (genreIds: number[]): string[] => {
     const genres: string[] = [];
@@ -172,7 +172,7 @@ const index = () => {
     return genres;
   };
 
-  const formatRuntime = (minutes) => {
+  const formatRuntime = (minutes:number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}min`;

@@ -23,7 +23,6 @@ const EmojiButton = ({ emotion }: EmojiButtonProps) => {
         {emoji}
       </span>
       {emotion}
-      {emotion === 'Random' ? ' ': ''}
     </button>
   );
 };
