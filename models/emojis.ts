@@ -55,7 +55,7 @@ export const emojis = {
     "id": 10749,
     "emoji": "💖",
   },
-  "Science Fiction": {
+  "Fiction": {
     "id": 878,
     "emoji": "🛸",
   },
