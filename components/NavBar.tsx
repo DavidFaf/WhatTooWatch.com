@@ -13,7 +13,7 @@ const NavBar = () => {
         <Image  src={movieLogo} alt="Movielogo" width={55} />
       </Link>
         <Link href={"/"}>
-      <h3 className='text-purple text-xl navbar-center'>WhatTooWatch.io</h3>
+      <h3 className='text-purple text-xl navbar-center'>WhatTooWatch.com</h3>
       </Link>
       <p className='navbar-end'> </p>
     </div>
