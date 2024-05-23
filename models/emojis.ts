@@ -70,9 +70,9 @@ export const emojis = {
   "Western": {
     "id": 37,
     "emoji": "🤠",
-  },
-  "Random": {
-    "id": 0,
-    "emoji": "🔁",
   }
+  // "Random": {
+  //   "id": 0,
+  //   "emoji": "🔁",
+  // }
 };

@@ -1,7 +1,6 @@
 import EmojiButton from "@components/EmojiButton";
 import RoundCard from "@components/RoundCard";
 import React from "react";
-import { Emojis } from "@models/types";
 
 import { emojis } from "@models/emojis";
 import Link from "next/link";
@@ -18,7 +17,7 @@ function page() {
           <br className="max-md:hidden" />
           <span className="orange_gradient text-center">
             {" "}
-            BASED ON HOW YOU’RE FEELING
+            BASED ON OUR RECOMMENDATIONS
           </span>
         </p>
       </section>

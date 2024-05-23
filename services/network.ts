@@ -1,11 +1,12 @@
 const fetchData = async (url: string) => {
+  const apiKey = process.env.NEXT_PUBLIC_TMDB_KEY;
+
   try {
     const options = {
       method: "GET",
       headers: {
         accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NGM1NGVmMzIwZjU0OGNiYWUzZTRmMTRhMDNiNjQ4YiIsInN1YiI6IjY2M2VmZTRiZThlMjYwODUxYWI1ZDYyYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Eyfu6OCrxhi3tUfrBEhrQSF7eeIGziZWzDOQHt0zQ30",
+        Authorization: `Bearer ${apiKey}`,
       },
     };
 

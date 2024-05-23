@@ -1,12 +1,11 @@
 "use client";
+import Loading from "@app/loading";
 import NavBar from "@components/NavBar";
 import RoundCard from "@components/RoundCard";
 import { emojis } from "@models/emojis";
 import fetchData from "@services/network";
-import { error } from "console";
 import { useSearchParams, useRouter } from "next/navigation";
-import { NextResponse } from "next/server";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 
 type movieObject = {
   adult: boolean;
@@ -35,11 +34,12 @@ const index = () => {
   const router = useRouter();
   const genre = searchParams.get("mood") || "";
   const genre_id = searchParams.get("genre_id") || "";
-  const [movieData, setMovieData] = useState<movieData>();
+  const [movieData, setMovieData] = useState<movieData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullOverview, setShowFullOverview] = useState(false);
   const [trailerKeys, setTrailerKeys] = useState([]);
   const [runtimes, setRuntimes] = useState([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [pageNum, setPageNum] = useState<number>(1);
 
   if (!(genre in emojis)) {
@@ -49,7 +49,6 @@ const index = () => {
 
   const fetchMoviesByGenre = async () => {
     const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${pageNum}&sort_by=popularity.desc&with_genres=${genre_id}`;
-
     try {
       const { data, error } = await fetchData(url);
 
@@ -82,20 +81,17 @@ const index = () => {
 
         const trailerKey = trailerResponse.results?.[0]?.key || null;
 
-        const { data: movieDetailsResponse, error: movieDetailsError } = await fetchData(
-          `https://api.themoviedb.org/3/movie/${movie.id}`
-        );
-  
+        const { data: movieDetailsResponse, error: movieDetailsError } =
+          await fetchData(`https://api.themoviedb.org/3/movie/${movie.id}`);
+
         if (movieDetailsError) {
           console.error(movieDetailsError);
           return null;
         }
         const runtime = movieDetailsResponse.runtime || null;
 
-
         return { trailerKey, runtime };
       });
-
 
       const moviesWithTrailers = await Promise.all(trailerPromises);
 
@@ -104,12 +100,11 @@ const index = () => {
         .filter((key) => key !== null);
 
       const runtimes = moviesWithTrailers
-      .map((movie) => movie.runtime)
-      .filter((runtime) => runtime !== null);
+        .map((movie) => movie.runtime)
+        .filter((runtime) => runtime !== null);
 
       setTrailerKeys(trailerKeys);
       setRuntimes(runtimes);
-
 
       if (error) {
         alert(error);
@@ -118,12 +113,18 @@ const index = () => {
       // console.log(trailerKeys);
     } catch (err) {
       alert(err);
+    } finally {
+      setIsLoading(false); // End loading
     }
   };
 
   useEffect(() => {
     fetchMoviesByGenre();
   }, [genre_id, pageNum]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (!movieData) {
     return null;
@@ -182,11 +183,13 @@ const index = () => {
   // console.log(genres); // Output: ["Science Fiction", "Adventure", "Action"]
 
   return (
+    // <div>
+    //   {isLoading ? (<h1>Is loading</h1>):(
     <div className="max-w-[700px]">
       <section className="title-section pt-4">
         <NavBar />
       </section>
-      <section className="py-9">
+      <section className="py-4">
         <RoundCard>
           <figure>
             <div className="video-responsive w-full">
@@ -206,13 +209,15 @@ const index = () => {
       <section className="movie-details pb-4">
         <p className="text-3xl font-semibold">{movie.title}</p>
         <div className="text-lg font-medium pb-2">
-          {movie.release_date.substring(0, 4)} | {formatRuntime(runtimes[currentIndex])} | ⭐{" "}
+          {movie.release_date.substring(0, 4)} |{" "}
+          {formatRuntime(runtimes[currentIndex])} | ⭐{" "}
           <span className="font-semibold">
             {parseFloat(movie.vote_average.toFixed(2))}
           </span>
           <span className="opacity-75">/10</span>
         </div>
-        <div className="flex flex-row justify-start items-center gap-2 wrap flex-nowrap overflow-auto pb-2 noScroolBar">
+        {/* <div className="flex flex-row justify-start items-center gap-2 wrap flex-nowrap overflow-auto pb-2 noScroolBar"> */}
+        <div className="flex max-w-[300px] md:max-w-full flex-row justify-start items-center gap-2 flex-nowrap overflow-x-auto pb-2 noScrollBar">
           {genres.map((genre) => (
             <div
               key={genre}
@@ -249,6 +254,8 @@ const index = () => {
         </button>
       </section>
     </div>
+    // )}
+    // </div>
   );
 };
 
